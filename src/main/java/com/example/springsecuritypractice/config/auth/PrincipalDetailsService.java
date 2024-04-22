@@ -17,6 +17,9 @@ public class PrincipalDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    // 시큐리티 session = Authentication = UserDetails
+    // return 하게 되면 Authentication(내부 UserDetails) 에 들어가고
+    // 시큐리티 session(내부 Authentication(내부 UserDetails)) 에 들어가게됨. => 로그인 완료
     @Override //파라미터는 DTO에 있는 컬럼명을 그대로 써줘야됨.
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User userEntity = userRepository.findByUsername(username);
