@@ -33,6 +33,9 @@ public class SecurityConfig {
                                 .anyRequest().permitAll() // 나머지 url은 모든 접근 허용
                 ).formLogin((formLogin) ->
                         formLogin.loginPage("/loginForm") // formLogin 활성화, 권한이 없는 경우 403 페이지가 아닌 login 페이지로 이동
+                                .loginProcessingUrl("/login") // /login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행해줌.
+                                .defaultSuccessUrl("")// 로그인 성공시 url
+//                                .usernameParameter("username2") principalDetailsService와 Model의 필드명이 다를 때 usernameParameter로 매핑시켜준다.
                 );
 
         return http.build();
