@@ -10,7 +10,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity // 스프링 시큐리티 필터(SecurityConfig)가 스프링 필터체인에 등록됨.
-@EnableMethodSecurity
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true) // @EnableGlobalMethodSecurity 는 deprecated 됨 -> secure 어노테이션 활성화 ()
+// securedEnabled -> 메소드에 @Secured 어노테이션 활성화
+// prePostEnabled -> preAuthorize, postAuthorize 어노테이션 활성화
 public class SecurityConfig {
 
     // 해당 메서드의 리턴되는 오브젝트를 IOC로 등록해준다.

@@ -4,6 +4,8 @@ import com.example.springsecuritypractice.model.User;
 import com.example.springsecuritypractice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,7 +68,6 @@ public class IndexController {
         return "loginForm";
     }
 
-
     /**
      * 회원가입 form
      * @return
@@ -89,6 +90,18 @@ public class IndexController {
         user.setPassword(encPassword);
         userRepository.save(user); // 회원가입, 비밀번호 암호화 필요 => security로 로그인 할 수 없음
         return "redirect:/loginForm";
+    }
+
+    @Secured("ROLE_ADMIN") // 특정 메소드에 권한별 접근 허용을 하고싶을 때
+    @GetMapping("/info")
+    public @ResponseBody String info() {
+        return "개인정보";
+    }
+
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')") // 이 메소드가 실행되기 직전에 실행됨, 여러개의 권한을 걸고싶을때
+    @GetMapping("/data")
+    public @ResponseBody String data() {
+        return "데이터정보";
     }
 
 }
