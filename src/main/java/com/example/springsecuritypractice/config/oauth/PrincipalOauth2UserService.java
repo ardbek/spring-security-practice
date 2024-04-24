@@ -3,6 +3,7 @@ package com.example.springsecuritypractice.config.oauth;
 import com.example.springsecuritypractice.config.auth.PrincipalDetails;
 import com.example.springsecuritypractice.config.auth.provider.FacebookUserInfo;
 import com.example.springsecuritypractice.config.auth.provider.GoogleUserInfo;
+import com.example.springsecuritypractice.config.auth.provider.NaverUserInfo;
 import com.example.springsecuritypractice.config.auth.provider.OAuth2UserInfo;
 import com.example.springsecuritypractice.model.User;
 import com.example.springsecuritypractice.repository.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
@@ -24,10 +27,10 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     // 함수 종료시 @AuthenticationPrincipal 어노테이션이 만들어짐.
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        OAuth2User oauth2User = super.loadUser(userRequest);
         System.out.println("getClientRegistration : " + userRequest.getClientRegistration()); // registrationId로 어떤 OAuth로 로그인 했는지 확인 가능함.
         System.out.println("getAccessToken : " + userRequest.getAccessToken().getTokenValue());
 
-        OAuth2User oauth2User = super.loadUser(userRequest);
         // 구글로그인 버튼 클릭 -> 구글로그인창 -> 로그인을 완료 -> code를 리턴(OAuth-Client라이브러리가 받아줌) -> AccessToken 요청
         // userRequest정보 -> loadUser함수 호출 -> 구글로부터 회원프로필 받아줌.
         System.out.println("getAttributes : " + oauth2User.getAttributes());
@@ -40,8 +43,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         } else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
             System.out.println("페이스북 로그인 요청");
             oAuth2UserInfo = new FacebookUserInfo(oauth2User.getAttributes());
-        } else {
-            System.out.println("우리는 구글이나 페이스북만 지원해요ㅠㅠ");
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
+            System.out.println("네이버 로그인 요청");
+            oAuth2UserInfo = new NaverUserInfo((Map<String, Object>) oauth2User.getAttributes().get("response"));
+        }  else {
+            System.out.println("우리는 구글이나 페이스북과 네이버 지원해요ㅠㅠ");
         }
 
 
@@ -56,7 +62,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         // 이미 회원가입이 되어있는지 확인
         User userEntity = userRepository.findByUsername(username);
         if (userEntity == null) { // 가입 x
-            System.out.println("구글 로그인이 최초입니다.");
+            System.out.println("OAuth 로그인이 최초입니다.");
             userEntity = User.builder()
                     .provider(provider)
                     .providerId(providerId)
@@ -67,7 +73,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .build();
             userRepository.save(userEntity);
         } else {
-            System.out.println("소셜 로그인을 한적이 있습니다. 자동 회원가입이 되어있습니다.");
+            System.out.println("OAuth 로그인을 한적이 있습니다. 자동 회원가입이 되어있습니다.");
         }
 
         // PrincipalDetails 타입을 반환하기 위해 구현함
