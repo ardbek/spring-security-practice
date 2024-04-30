@@ -1,10 +1,7 @@
 package com.example.springsecuritypractice.config.oauth;
 
 import com.example.springsecuritypractice.config.auth.PrincipalDetails;
-import com.example.springsecuritypractice.config.auth.provider.FacebookUserInfo;
-import com.example.springsecuritypractice.config.auth.provider.GoogleUserInfo;
-import com.example.springsecuritypractice.config.auth.provider.NaverUserInfo;
-import com.example.springsecuritypractice.config.auth.provider.OAuth2UserInfo;
+import com.example.springsecuritypractice.config.auth.provider.*;
 import com.example.springsecuritypractice.model.User;
 import com.example.springsecuritypractice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +43,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         } else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
             System.out.println("네이버 로그인 요청");
             oAuth2UserInfo = new NaverUserInfo((Map<String, Object>) oauth2User.getAttributes().get("response"));
-        }  else {
-            System.out.println("우리는 구글이나 페이스북과 네이버 지원해요ㅠㅠ");
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
+            System.out.println("카카오 로그인 요청");
+            oAuth2UserInfo = new KakaoUserInfo((Map<String, Object>) oauth2User.getAttributes().get("id"));
+        } else {
+            System.out.println("지원하지 않는 소셜 로그인");
         }
 
 
