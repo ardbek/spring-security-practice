@@ -45,7 +45,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             oAuth2UserInfo = new NaverUserInfo((Map<String, Object>) oauth2User.getAttributes().get("response"));
         } else if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
             System.out.println("카카오 로그인 요청");
-            oAuth2UserInfo = new KakaoUserInfo((Map<String, Object>) oauth2User.getAttributes().get("id"));
+            oAuth2UserInfo = new KakaoUserInfo((Map<String, Object>) oauth2User.getAttributes());
         } else {
             System.out.println("지원하지 않는 소셜 로그인");
         }

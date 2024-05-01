@@ -10,13 +10,13 @@ public class KakaoUserInfo implements OAuth2UserInfo{
 
     public KakaoUserInfo(Map<String, Object> attributes) {
         this.attributes = attributes;
-        this.kakaoAccountAttributes = (Map<String, Object>) attributes.get("kakao_account");
+        this.kakaoAccountAttributes = (Map<String, Object>) attributes.get("properties");
         this.profileAttribute = (Map<String, Object>) attributes.get("profile");
     }
 
     @Override
     public String getProvideId() {
-        return (String) attributes.get("id");
+        return String.valueOf(attributes.get("id"));
     }
 
     @Override
